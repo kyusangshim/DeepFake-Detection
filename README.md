@@ -10,7 +10,7 @@
   - EfficientNet-B0+GCN: 얼굴의 전역적인 특징 추출
   - EfficientNet-B1: 얼굴의 세부적인 특징 추출(눈, 코, 입 등)
 - **ViT 기반 시간적 이상 탐지**  
-  - 두 스트림의 특징을 결합하여 Vision Transformer (ViT)에 입력. 
+  - 두 스트림의 특징을 결합하여 Vision Transformer (ViT)에 입력
   - 시간적 상관성을 분석해 딥페이크 여부를 판별
 - **전이 학습(Transfer Learning)**  
   - 사전 학습된 EfficientNet과 ViT를 활용하여 학습 효율성과 정확도를 극대화
@@ -38,14 +38,18 @@
 **사전 학습 후 미세 조정을 하는 방식으로 학습 진행**
 
 ### 데이터 셋
-- FaceForensics++ 데이터 사용
-- 해당 데이터는 5개의 위조 방식(Deepfakes, Face2Face, FaceSwap, NeuralTextures 등)과 원본 데이터 각각 1000개씩 포함하여 총 **6000개**의 영상으로 구성
+- FaceForensics++ 데이터 사용 (5개의 위조방식과 원본 각각 1000개씩 포함하여 총 6000개의 영상으로 구성)
 - 해당 실험에서는 FaceSwap을 제외한 총 5000개의 데이터 사용
-- 
+- 이상치에 대한 전처리를 마치면 각 방식에 대해 949개의 데이터 셋이 남아 최종적으로 4745개의 데이터 활용
+- 훈련 데이터: 각 방식에서 0~760 인덱스 까지의 데이터 ( 총 760*5=3800개 )
+- 검증 데이터: 각 방식에서 760~849 인덱스 까지의 데이터 ( 총 89*5=445개 )
+- 테스트 데이터: 각 방식에서 훈련/검증 데이터를 제외한 나머지 데이터 ( 총 100*5=500개 )
+- 각 방식에 대해 테스트 시 (위조, 원본) 과 같이 한 쌍으로 묶어 총 200개의 데이터로 테스트
 
 
 ### 사전 학습
-![image](https://github.com/user-attachments/assets/ce0a10ff-4fb3-443b-bff2-b7b3e5e706a5)
+![image](https://github.com/user-attachments/assets/938480c3-569b-4a7e-a02c-9c21bcdce651)
+
 
 
   
