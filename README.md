@@ -15,6 +15,10 @@
  
 
 ### 📁 프로젝트 구조
+
+![image](https://github.com/user-attachments/assets/3630e69b-2711-4929-b748-f94dff03e531)
+
+
 1. **전역 스트림(Global Stream)**  
    - EfficientNet-B0 모델을 활용해 얼굴 전체의 특징 맵을 생성합니다.
 2. **국소 스트림(Local Stream)**  
