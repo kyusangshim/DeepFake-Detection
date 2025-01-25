@@ -33,9 +33,26 @@
    - num_patchs=16, num_patchs=1 두 개의 ViT로 시간적 위조 특성 세분화 추출
   
 
+## 2. 학습 방법
+
+**사전 학습 후 미세 조정을 하는 방식으로 학습 진행**
+
+### 데이터 셋
+- FaceForensics++ 데이터 사용
+- 해당 데이터는 5개의 위조 방식(Deepfakes, Face2Face, FaceSwap, NeuralTextures 등)과 원본 데이터 각각 1000개씩 포함하여 총 **6000개**의 영상으로 구성
+- 해당 실험에서는 FaceSwap을 제외한 총 5000개의 데이터 사용
+- 
 
 
-## 2. 결과
+### 사전 학습
+![image](https://github.com/user-attachments/assets/ce0a10ff-4fb3-443b-bff2-b7b3e5e706a5)
+
+
+  
+
+
+
+## 3. 결과
 
 ### 성능 비교
 
@@ -44,7 +61,7 @@
 | Xception3D         | 0.62  | 0.79 | 0.64 | 0.66 | 0.77 | 0.696 |
 | Resnext+LSTM       | 0.68  | 0.92 | 0.81 | 0.80 | 0.90 | 0.822 |
 | ResNet3D50         | 0.72  | 0.85 | 0.79 | 0.74 | 0.86 | 0.792 |
-| **Proposed Model** | 0.82  | 0.91 | 0.84 | 0.85 | 0.90 | 0.864 |
+| **제안 모델** | 0.82  | 0.91 | 0.84 | 0.85 | 0.90 | 0.864 |
 
 - 비교 모델인 Xception3D, Resnext+LSTM, ResNet3D50에 비해 모두 높은 성능을 보임.
   
