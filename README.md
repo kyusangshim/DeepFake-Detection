@@ -1,66 +1,68 @@
-# DeepFake-Detection using EfficientNet and ViT
+# DeepFake Detection using EfficientNet and ViT
 
-## 1. 소개
-본 프로젝트는 영상 속 딥페이크(Deepfake)를 탐지하기 위해 딥러닝 기법을 활용한 연구 결과를 소개합니다. 본 연구는 얼굴의 전역(Global) 및 국소(Local) 특징을 효과적으로 추출하고 분석하여, 신원 및 표정 변조를 모두 탐지할 수 있는 모델을 개발하였습니다. <br><br>
+## 1. Introduction
+This project presents a deep learning-based approach for detecting deepfake content in videos. Our research focuses on effectively extracting and analyzing both global and local facial features to detect identity and expression manipulations. <br><br>
 
 
 
-### 🛠️ 주요 특징
-- **이중 스트림 모델**  
-  - EfficientNet-B0+GCN: 얼굴의 전역적인 특징 추출
-  - EfficientNet-B1: 얼굴의 세부적인 특징 추출(눈, 코, 입 등)
-- **ViT 기반 시간적 이상 탐지**  
-  - 두 스트림의 특징을 결합하여 Vision Transformer (ViT)에 입력
-  - 시간적 상관성을 분석해 딥페이크 여부를 판별
-- **전이 학습(Transfer Learning)**  
-  - 사전 학습된 EfficientNet과 ViT를 활용하여 학습 효율성과 정확도를 극대화<br><br>
+### (1) Key Features
+- **Two-stream Model**  
+  - EfficientNet-B0+GCN: Extracts global facial features
+  - EfficientNet-B1: Extracts fine-grained facial features (eyes, nose, mouth, etc.)
+- **ViT-based Temporal Anomaly Detection**  
+  - Combines features from both streams and inputs them into a Vision Transformer (ViT)
+  - Analyzes temporal correlations to determine deepfake authenticity
+- **Transfer Learning**  
+  - Leverages pre-trained EfficientNet and ViT to maximize learning efficiency and accuracy
+
+<br><br>
  
 
 
-### 🛖 전체 모델 구조
+### (2) Overall Model Architecture
 
 ![image](https://github.com/user-attachments/assets/3630e69b-2711-4929-b748-f94dff03e531)
 
 
-1. **전역 스트림(Global Stream)**  
-   - EfficientNet-B0+GCN 모델을 활용해 얼굴 전체의 특징 맵을 생성
-2. **국소 스트림(Local Stream)**  
-   - EfficientNet-B1 모델을 통해 얼굴의 주요 세부 영역에서 세밀한 특징을 추출
-3. **출력 결합(Sum)**  
-   - 전역 및 국소 스트림의 특징을 합하여 Vision Transformer에 입력
+1. **Global Stream**  
+   - Uses the EfficientNet-B0+GCN model to extract global facial feature maps.
+2. **Local Stream**  
+   - Uses the EfficientNet-B1 model to extract detailed features from key facial regions.
+3. **Feature Fusion (Sum)**  
+   - Combines global and local features and inputs them into the Vision Transformer.
 4. **시간적 분석**  
-   - ViT로 시간적 관계를 분석하여 딥페이크 여부를 최종 판별
-   - num_patchs=16, num_patchs=1 두 개의 ViT로 시간적 위조 특성 세분화 추출<br><br>
+   - Uses ViT to analyze temporal relationships and detect deepfakes.
+   - Extracts fine-grained temporal forgery patterns using two ViT variants: num_patches=16 and num_patches=1.<br><br>
   
 
 
 
-## 2. 학습 방법
+## 2. Training Methodology
 
-#### 사전 학습 후 미세 조정을 하는 방식으로 학습 진행<br><br>
+#### The model is trained using a pre-training and fine-tuning approach.<br><br>
 
-### (1) 데이터 셋
-- FaceForensics++ 데이터 사용 
-- 본 실험에서는 FaceSwap을 제외한 총 5000개의 데이터 사용
-- 전처리 후 각 방식별 949개, 총 **4745개** 데이터 활용
-- 훈련 데이터: 각 방식에서 **0~760 인덱스 데이터** ( 총 760*5=3800개 )
-- 검증 데이터: 각 방식에서 **760~849 인덱스 데이터** ( 총 89*5=445개 )
-- 테스트 데이터: 각 방식에서 **849~949 인덱스 데이터** ( 총 100*5=500개 )
-- 테스트는 각 위조 방식별로 (위조, 원본) 쌍 **200개**로 진행
-- 또 다른 테스트 데이터 셋은 Celeb-DF-V2 사용<br><br>
+### (1) Dataset
+- FaceForensics++ dataset used.
+- A total of 5000 samples were used, excluding FaceSwap.
+- After preprocessing, 949 samples per method were retained, totaling **4745** samples.
+- Training Data: **0–760 index** samples per method (760 × 5 = 3800 total samples).
+- Validation Data: **760–849 index** samples per method (89 × 5 = 445 total samples).
+- Test Data: **849–949** index samples per method (100 × 5 = 500 total samples).
+- Testing was conducted with **200 pairs** (fake, real) per manipulation method.
+- Another test dataset used: Celeb-DF-V2.<br><br>
 
 
-### (2) 사전 학습
+### (2) Pre-training
 ![image](https://github.com/user-attachments/assets/938480c3-569b-4a7e-a02c-9c21bcdce651)
-- 위 사진처럼 우선 각 스트림을 따로 학습 진행
-- 사전 학습시 imageNet weight 활용
-- 지역 스트림은 이목구비만 보이도록 마스킹된 데이터로 학습
-- 학습이 완료되면 각 가중치는 저장<br><br>
+- Each stream was pre-trained separately, as shown in the figure above.
+- ImageNet weights were used for pre-training.
+- The local stream was trained using masked data showing only facial features.
+- The trained weights were saved upon completion.<br><br>
 
-### (3) 미세 조정
+### (3) Fine-tuning
 ![image](https://github.com/user-attachments/assets/70a10d3d-6ae5-4a3d-b26d-3064aab8f3ce)
-- 각 스트림에 사전 학습된 weight를 입힌 후 전체 모델 구성
-- 사전학습 시 사용한 학습률의 0.1배로 미세조정<br><br>
+- The entire model was assembled with the pre-trained weights applied to each stream.
+- Fine-tuning was performed with a learning rate reduced to 1/10 of the pre-training rate.<br><br>
 
 
 
@@ -69,16 +71,16 @@
 
 
 
-## 3. 결과
+## 3. Results
 
-### 성능 비교
+### Performance Comparison
 
 | Model              | C-DF | DF   | F2F  | NT   | FS   | Avg   |
 |--------------------|-------|------|------|------|------|-------|
 | Xception3D         | 0.62  | 0.79 | 0.64 | 0.66 | 0.77 | 0.696 |
 | Resnext+LSTM       | 0.68  | 0.92 | 0.81 | 0.80 | 0.90 | 0.822 |
 | ResNet3D50         | 0.72  | 0.85 | 0.79 | 0.74 | 0.86 | 0.792 |
-| **제안 모델** | 0.82  | 0.91 | 0.84 | 0.85 | 0.90 | 0.864 |
+| **Proposed Model** | 0.82  | 0.91 | 0.84 | 0.85 | 0.90 | 0.864 |
 
-- 비교 모델인 Xception3D, Resnext+LSTM, ResNet3D50에 비해 모두 높은 성능을 보임.
+- The proposed model outperformed baseline models such as Xception3D, Resnext+LSTM, and ResNet3D50 in all cases.
   
